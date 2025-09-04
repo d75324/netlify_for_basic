@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA para Django - Lohacemoscondjango</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --danger: #e63946;
+            --warning: #fca311;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .app-container {
+            max-width: 100%;
+            min-height: 100vh;
+            margin: 0 auto;
+        }
+        
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--dark);
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .app-header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+        
+        .instructions {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 1rem 1.8rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .response-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .response-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .loader {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .loader-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .message.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        
+        .message.info {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #1565c0;
+        }
+        
+        .data-preview {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .app-footer {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .server-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background-color: #4caf50;
+        }
+        
+        .status-offline {
+            background-color: #f44336;
+        }
+        
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Formulario SPA</h1>
+            <p>Conectado a lohacemoscondjango.online</p>
+        </header>
+        
+        <div class="instructions">
+            <h2>¿Cómo usar esta SPA?</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <strong>Guarda esta página</strong><br>
+                    Presiona el botón de compartir en tu navegador y guárdala en tu dispositivo.
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <strong>Sube el archivo a un servicio de hosting</strong><br>
+                    Puedes usar Netlify Drop: ve a <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a> y arrastra el archivo HTML.
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <strong>Accede desde la URL proporcionada</strong><br>
+                    Una vez subido, abre el enlace proporcionado por el servicio de hosting.
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-card">
+            <h2 class="form-title">Ingresa tus datos</h2>
+            
+            <div class="form-group">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" id="nombre" class="form-input" placeholder="Tu nombre completo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-input" placeholder="tu.email@ejemplo.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="color" class="form-label">Color Favorito</label>
+                <select id="color" class="form-select" required>
+                    <option value="">Selecciona un color</option>
+                    <option value="rojo">Rojo</option>
+                    <option value="azul">Azul</option>
+                    <option value="verde">Verde</option>
+                    <option value="amarillo">Amarillo</option>
+                    <option value="morado">Morado</option>
+                    <option value="naranja">Naranja</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fruta" class="form-label">Fruta Favorita</label>
+                <select id="fruta" class="form-select" required>
+                    <option value="">Selecciona una fruta</option>
+                    <option value="manzana">Manzana</option>
+                    <option value="banana">Banana</option>
+                    <option value="naranja">Naranja</option>
+                    <option value="fresa">Fresa</option>
+                    <option value="uva">Uva</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="mensaje" class="form-label">Mensaje</label>
+                <textarea id="mensaje" class="form-textarea" placeholder="Escribe tu mensaje aquí..." required></textarea>
+            </div>
+            
+            <button id="submit-btn" class="btn btn-primary">Enviar Datos</button>
+        </div>
+        
+        <div class="response-container">
+            <h3 class="response-title">Respuesta del Servidor</h3>
+            <div id="response-content">
+                <div class="message info">
+                    <p>Los datos se enviarán a tu backend Django</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="app-footer">
+            <p>Conectado a: lohacemoscondjango.online (137.184.217.92)</p>
+            <p>Endpoint: /api/api.projects</p>
+            <div class="server-status">
+                <div class="status-dot status-online"></div>
+                <span>Servidor en línea</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // URL de tu backend Django
+        const API_URL = 'https://lohacemoscondjango.online/api/api.projects';
+        
+        // Elementos DOM
+        const submitBtn = document.getElementById('submit-btn');
+        const responseContent = document.getElementById('response-content');
+        const formInputs = {
+            nombre: document.getElementById('nombre'),
+            email: document.getElementById('email'),
+            color: document.getElementById('color'),
+            fruta: document.getElementById('fruta'),
+            mensaje: document.getElementById('mensaje')
+        };
+        
+        // Detectar si estamos en un entorno con problemas de CORS
+        const isLocalFile = window.location.protocol === 'file:' || 
+                           window.location.protocol === 'content:';
+        
+        if (isLocalFile) {
+            responseContent.innerHTML = `
+                <div class="message error">
+                    <p>⚠️ No estás ejecutando esta SPA correctamente</p>
+                    <p>Sigue las instrucciones arriba para subir el archivo a un servicio de hosting.</p>
+                </div>
+            `;
+        }
+        
+        // Función para mostrar mensaje de respuesta
+        function showMessage(type, text) {
+            responseContent.innerHTML = `
+                <div class="message ${type}">
+                    <p>${text}</p>
+                </div>
+            `;
+        }
+        
+        // Función para mostrar loader
+        function showLoader() {
+            responseContent.innerHTML = `
+                <div class="loader">
+                    <div class="loader-spinner"></div>
+                    <p>Enviando datos al servidor...</p>
+                </div>
+            `;
+        }
+        
+        // Función para validar el formulario
+        function validateForm() {
+            for (const key in formInputs) {
+                if (!formInputs[key].value.trim()) {
+                    showMessage('error', `Por favor, completa el campo: ${key}`);
+                    formInputs[key].focus();
+                    return false;
+                }
+            }
+            
+            // Validación básica de email
+            const email = formInputs.email.value;
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showMessage('error', 'Por favor, ingresa un email válido');
+                formInputs.email.focus();
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Función para enviar datos al backend
+        async function sendDataToDjango() {
+            if (isLocalFile) {
+                showMessage('error', 'Debes subir este archivo a un servicio de hosting como Netlify para que funcione correctamente.');
+                return;
+            }
+            
+            // Preparar datos
+            const formData = {
+                nombre: formInputs.nombre.value.trim(),
+                email: formInputs.email.value.trim(),
+                color_favorito: formInputs.color.value,
+                fruta_favorita: formInputs.fruta.value,
+                mensaje: formInputs.mensaje.value.trim()
+            };
+            
+            showLoader();
+            
+            try {
+                // Enviar datos al backend Django
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    displayResponse({
+                        status: 'success',
+                        message: 'Datos enviados correctamente',
+                        data: formData,
+                        response: responseData
+                    });
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}. ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                
+                if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
+                    showMessage('error', 'Error de CORS. Verifica que tu backend Django tenga configurado CORS correctamente.');
+                } else {
+                    showMessage('error', `Error: ${error.message}`);
+                }
+            }
+        }
+        
+        // Función para mostrar la respuesta
+        function displayResponse(data) {
+            if (data.status === 'success') {
+                responseContent.innerHTML = `
+                    <div class="message success">
+                        <p>¡Datos enviados correctamente!</p>
+                        <p>${data.message}</p>
+                    </div>
+                    <div class="data-preview">
+                        <strong>Datos enviados:</strong><br>
+                        ${JSON.stringify(data.data, null, 2)}
+                    </div>
+                `;
+                
+                // Limpiar formulario después de éxito
+                for (const key in formInputs) {
+                    if (key !== 'color' && key !== 'fruta') {
+                        formInputs[key].value = '';
+                    } else {
+                        formInputs[key].selectedIndex = 0;
+                    }
+                }
+            } else {
+                showMessage('error', data.message || 'Error al procesar la solicitud');
+            }
+        }
+        
+        // Event listener para el botón de enviar
+        submitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (validateForm()) {
+                sendDataToDjango();
+            }
+        });
+    </script>
+</body>
+</html>
