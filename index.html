@@ -275,34 +275,6 @@
             <p>Conectado a lohacemoscondjango.online</p>
         </header>
         
-        <div class="instructions">
-            <h2>¿Cómo demonios usar esta SPA?</h2>
-            
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <strong>Guarda esta página</strong><br>
-                    Presiona el botón de compartir en tu navegador y guárdala en tu dispositivo.
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <strong>Sube el archivo a un servicio de hosting</strong><br>
-                    Puedes usar Netlify Drop: ve a <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a> y arrastra el archivo HTML.
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <strong>Accede desde la URL proporcionada</strong><br>
-                    Una vez subido, abre el enlace proporcionado por el servicio de hosting.
-                </div>
-            </div>
-        </div>
-        
         <div class="form-card">
             <h2 class="form-title">Ingresa tus datos</h2>
             
@@ -380,7 +352,7 @@
             email: document.getElementById('email'),
             color: document.getElementById('color'),
             fruit: document.getElementById('fruta'),
-            menssage: document.getElementById('mensaje')
+            message: document.getElementById('mensaje')
         };
         
         // Detectar si estamos en un entorno con problemas de CORS
@@ -438,7 +410,7 @@
         // Función para enviar datos al backend
         async function sendDataToDjango() {
             if (isLocalFile) {
-                showMessage('error', 'Debes subir este archivo a un servicio de hosting como Netlify para que funcione correctamente.');
+                showMessage('error', 'Debes subir este archivo a un servicio de hosting para que funcione correctamente.');
                 return;
             }
             
