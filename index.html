@@ -276,7 +276,7 @@
         </header>
         
         <div class="instructions">
-            <h2>¿Cómo usar esta SPA?</h2>
+            <h2>¿Cómo demonios usar esta SPA?</h2>
             
             <div class="step">
                 <div class="step-number">1</div>
@@ -376,11 +376,11 @@
         const submitBtn = document.getElementById('submit-btn');
         const responseContent = document.getElementById('response-content');
         const formInputs = {
-            nombre: document.getElementById('nombre'),
+            name: document.getElementById('nombre'),
             email: document.getElementById('email'),
             color: document.getElementById('color'),
-            fruta: document.getElementById('fruta'),
-            mensaje: document.getElementById('mensaje')
+            fruit: document.getElementById('fruta'),
+            menssage: document.getElementById('mensaje')
         };
         
         // Detectar si estamos en un entorno con problemas de CORS
@@ -391,7 +391,6 @@
             responseContent.innerHTML = `
                 <div class="message error">
                     <p>⚠️ No estás ejecutando esta SPA correctamente</p>
-                    <p>Sigue las instrucciones arriba para subir el archivo a un servicio de hosting.</p>
                 </div>
             `;
         }
@@ -443,13 +442,13 @@
                 return;
             }
             
-            // Preparar datos
+            // Preparar datos, coinciden con los campos del modelo de Django
             const formData = {
-                nombre: formInputs.nombre.value.trim(),
+                name: formInputs.nombre.value.trim(),
                 email: formInputs.email.value.trim(),
-                color_favorito: formInputs.color.value,
-                fruta_favorita: formInputs.fruta.value,
-                mensaje: formInputs.mensaje.value.trim()
+                color: formInputs.color.value,
+                fruit: formInputs.fruta.value,
+                menssage: formInputs.mensaje.value.trim()
             };
             
             showLoader();
