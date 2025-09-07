@@ -332,7 +332,7 @@
         
         <footer class="app-footer">
             <p>Conectado a: lohacemoscondjango.online (137.184.217.92)</p>
-            <p>Endpoint: /api/api.projects</p>
+            <p>Endpoint: /api/api.projects/</p>
             <div class="server-status">
                 <div class="status-dot status-online"></div>
                 <span>Servidor en línea</span>
@@ -342,7 +342,7 @@
 
     <script>
         // URL de tu backend Django
-        const API_URL = 'https://lohacemoscondjango.online/api/api.projects';
+        const API_URL = 'https://lohacemoscondjango.online/api/api.projects/';
         
         // Elementos DOM
         const submitBtn = document.getElementById('submit-btn');
@@ -432,7 +432,8 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(formData),
+                    mode: 'cors' // Asegurarse que maneje CORS
                 });
                 
                 if (response.ok) {
