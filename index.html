@@ -415,46 +415,41 @@
             }
             
             // Preparar datos, coinciden con los campos del modelo de Django
-            const formData = {
-                name: formInputs.nombre.value.trim(),
-                email: formInputs.email.value.trim(),
-                color: formInputs.color.value,
-                fruit: formInputs.fruta.value,
-                message: formInputs.mensaje.value.trim()
-            };
+            // Usamos FormData para una compatibilidad máxima con backends.
+            const formData = new FormData();
+            formData.append('name', formInputs.nombre.value.trim());
+            formData.append('email', formInputs.email.value.trim());
+            formData.append('color', formInputs.color.value);
+            formData.append('fruit', formInputs.fruta.value);
+            formData.append('message', formInputs.mensaje.value.trim());
             
             showLoader();
             
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
+                    body: formData, // Eliminado el encabezado Content-Type!
                     mode: 'cors',
                     credentials: 'omit',
                     redirect: 'follow'
                 });
-
-                // Las dificultades que genera el éxito: Si la respuesta es 201 Created, no hay que esperar un JSON.
+        
                 if (response.status === 201) {
                     displayResponse({
                         status: 'success',
                         message: 'Datos enviados correctamente. El servidor no devolvió contenido.',
-                        data: formData,
-                        response: {} // No hay datos de respuesta
+                        data: Object.fromEntries(formData), // Convertimos FormData a un objeto para mostrarlo
+                        response: {}
                     });
-                    return; // Terminar la ejecución aquí
+                    return;
                 }
-
-                // Manejar otros códigos de estado exitosos (ej. 200 OK)
+        
                 if (response.ok) {
                     const responseData = await response.json();
                     displayResponse({
                         status: 'success',
                         message: 'Datos enviados correctamente',
-                        data: formData,
+                        data: Object.fromEntries(formData),
                         response: responseData
                     });
                 } else {
@@ -464,11 +459,9 @@
             } catch (error) {
                 console.error('Error:', error);
                 
-                if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
-                    showMessage('error', 'Error de CORS. Verifica que tu backend Django tenga configurado CORS correctamente.');
-                } else {
-                    showMessage('error', `Error: ${error.message}`);
-                }
+                // El mensaje de error genérico de CORS ya no se mostrará si la solicitud funciona.
+                // Si sigue fallando, vemos este mensaje en su lugar.
+                showMessage('error', `Error: ${error.message}`);
             }
         }
        
