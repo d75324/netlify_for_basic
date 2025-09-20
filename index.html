@@ -426,23 +426,29 @@
             showLoader();
             
             try {
-                // Enviar datos al backend Django
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formData),
-                    mode: 'cors', // Asegurarse que maneje CORS
+                    mode: 'cors',
                     credentials: 'omit',
                     redirect: 'follow'
                 });
 
-                // Agregamos debug para ver la respuesta real
-                console.log('Response status:', response.status);
-                console.log('Response URL:', response.url);
-                console.log('Redirected:', response.redirected);
-                
+                // Las dificultades que genera el éxito: Si la respuesta es 201 Created, no hay que esperar un JSON.
+                if (response.status === 201) {
+                    displayResponse({
+                        status: 'success',
+                        message: 'Datos enviados correctamente. El servidor no devolvió contenido.',
+                        data: formData,
+                        response: {} // No hay datos de respuesta
+                    });
+                    return; // Terminar la ejecución aquí
+                }
+
+                // Manejar otros códigos de estado exitosos (ej. 200 OK)
                 if (response.ok) {
                     const responseData = await response.json();
                     displayResponse({
@@ -455,7 +461,6 @@
                     const errorText = await response.text();
                     throw new Error(`Error del servidor: ${response.status} ${response.statusText}. ${errorText}`);
                 }
-                
             } catch (error) {
                 console.error('Error:', error);
                 
@@ -466,7 +471,7 @@
                 }
             }
         }
-        
+       
         // Función para mostrar la respuesta
         function displayResponse(data) {
             if (data.status === 'success') {
