@@ -408,14 +408,13 @@
         }
         
         // Función para enviar datos al backend
+        // Función para enviar datos al backend
         async function sendDataToDjango() {
             if (isLocalFile) {
                 showMessage('error', 'Debes subir este archivo a un servicio de hosting para que funcione correctamente.');
                 return;
             }
             
-            // Preparar datos, coinciden con los campos del modelo de Django
-            // Usamos FormData para una compatibilidad máxima con backends.
             const formData = new FormData();
             formData.append('name', formInputs.nombre.value.trim());
             formData.append('email', formInputs.email.value.trim());
@@ -428,39 +427,39 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    body: formData, // Eliminado el encabezado Content-Type!
+                    body: formData,
                     mode: 'cors',
                     credentials: 'omit',
                     redirect: 'follow'
                 });
         
-                if (response.status === 201) {
-                    displayResponse({
-                        status: 'success',
-                        message: 'Datos enviados correctamente. El servidor no devolvió contenido.',
-                        data: Object.fromEntries(formData), // Convertimos FormData a un objeto para mostrarlo
-                        response: {}
-                    });
-                    return;
-                }
-        
-                if (response.ok) {
-                    const responseData = await response.json();
-                    displayResponse({
-                        status: 'success',
-                        message: 'Datos enviados correctamente',
-                        data: Object.fromEntries(formData),
-                        response: responseData
-                    });
-                } else {
+                // 1. Comprobar si la respuesta fue exitosa (código 2xx)
+                if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Error del servidor: ${response.status} ${response.statusText}. ${errorText}`);
                 }
+        
+                // 2. Intentar leer la respuesta como JSON solo si el body no está vacío.
+                let responseData = {};
+                try {
+                    // response.clone() se usa para que el stream de la respuesta siga disponible si json() falla.
+                    const clonedResponse = response.clone();
+                    responseData = await clonedResponse.json();
+                } catch (e) {
+                    // El servidor devolvió 201 (Created) sin un cuerpo JSON, lo cual es normal.
+                    console.warn('El servidor devolvió un código de estado 201, pero el cuerpo de la respuesta no es un JSON válido.');
+                }
+        
+                // 3. Mostrar la respuesta
+                displayResponse({
+                    status: 'success',
+                    message: 'Datos enviados correctamente.',
+                    data: Object.fromEntries(formData),
+                    response: responseData
+                });
+        
             } catch (error) {
                 console.error('Error:', error);
-                
-                // El mensaje de error genérico de CORS ya no se mostrará si la solicitud funciona.
-                // Si sigue fallando, vemos este mensaje en su lugar.
                 showMessage('error', `Error: ${error.message}`);
             }
         }
